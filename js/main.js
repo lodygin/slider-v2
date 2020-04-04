@@ -1,99 +1,150 @@
 function createCarousel(slidesCount = 5) {
-  let outSlides = '';
-  let slideItems = '<li class="slides__item active"><a href="#"></a></li>';
+  let carousel = document.querySelector('#carousel');
+
+  carousel.classList.add('carousel');
+
   let styleItems = '';
-  let indicatorItemOut = '<span class="indicators__item active" data-slide-to="0"></span>';
-
-
-  for (let i = 1; i < slidesCount; i++) {
-    slideItems += '<li class="slides__item"><a href="#"></a></li>';
-    indicatorItemOut += `<span class="indicators__item" data-slide-to="${i}"></span>`;
-  }
+  let style = document.createElement('style');
 
   for (let i = 1; i <= slidesCount; i++) {
-    styleItems += `.slides__item:nth-child(${i}) { background-image: url('img/_${Math.round(1 + Math.random() * 5)}.jpg'); } `;
+    styleItems += `.slides__item:nth-child(${i}) { background-image: url('img/i${Math.round(1 + Math.random() * 5)}.jpg'); } `;
   }
 
-  outSlides += `<ul class="slides">${slideItems}</ul><div class="indicators">${indicatorItemOut}</div>`;
+  style.innerHTML = styleItems;
+  document.querySelector('head').appendChild(style);
 
-  document.getElementById('carousel').innerHTML = outSlides + document.getElementById('carousel').innerHTML;
-  document.querySelector('style').innerHTML = styleItems;
+  let outSlides = document.createElement('ul');
+
+  outSlides.classList.add('slides');
+
+  for (let i = 0; i < slidesCount; i++) {
+    let slideElement = document.createElement('li');
+    let slideLink = '<a href="#"></a>';
+    slideElement.innerHTML = slideLink;
+    slideElement.classList.add('slides__item');
+    outSlides.appendChild(slideElement);
+  }
+
+  carousel.appendChild(outSlides);
+
+  let slides = document.querySelectorAll('.slides__item');
+
+  slides[0].classList.add('active');
+
+  let outIndicators = document.createElement('div');
+
+  outIndicators.classList.add('indicators');
+
+  for (let i = 0; i < slidesCount; i++) {
+    let indicatorElement = document.createElement('span');
+    indicatorElement.classList.add('indicators__item');
+    indicatorElement.setAttribute('data-slide-to', i);
+    outIndicators.appendChild(indicatorElement);
+  }
+
+  carousel.appendChild(outIndicators);
+
+  let indicatorsItems = document.querySelectorAll('.indicators__item');
+
+  indicatorsItems[0].classList.add('active');
+
+  let outControls = document.createElement('div');
+
+  outControls.classList.add('controls');
+
+  for (let i = 0; i < 3; i++) {
+    let controlElement = document.createElement('div');
+    let iconElement = document.createElement('i');
+    iconElement.classList.add('fas');
+    controlElement.appendChild(iconElement);
+    controlElement.classList.add('controls__item');
+    outControls.appendChild(controlElement);
+  }
+
+  carousel.appendChild(outControls);
+
+  let controlItems = document.querySelectorAll('.controls__item');
+
+  controlItems[0].classList.add('controls__prev');
+  controlItems[1].classList.add('controls__next');
+  controlItems[2].classList.add('controls__pause');
+
+  let iconItems = document.querySelectorAll('.fas');
+
+  iconItems[0].classList.add('fa-chevron-left');
+  iconItems[1].classList.add('fa-chevron-right');
+  iconItems[2].classList.add('fa-play');
+
+  iconItems[0].setAttribute('id', 'previous');
+  iconItems[1].setAttribute('id', 'next');
+  iconItems[2].setAttribute('id', 'pause');
+
+  let currentSlide = 0;
+  let slideInterval = setInterval(nextSlide, 2000);
+
+  let isPlaying = true;
+  let pauseButton = document.querySelector('#pause');
+  let next = document.querySelector('#next');
+  let previous = document.querySelector('#previous');
+
+  let indicators = document.querySelector('.indicators');
+
+  style.innerHTML += '.slides { position: relative; }';
+  style.innerHTML += '.controls { position: relative; }';
+  style.innerHTML += '.indicators { display: flex; }';
+
+  function goToSlide(n) {
+    slides[currentSlide].classList.toggle('active');
+    indicatorsItems[currentSlide].classList.toggle('active');
+    currentSlide = (n + slides.length) % slides.length;
+    slides[currentSlide].classList.toggle('active');
+    indicatorsItems[currentSlide].classList.toggle('active');
+  }
+
+  function nextSlide() {
+    goToSlide(currentSlide + 1);
+  }
+
+  function previousSlide() {
+    goToSlide(currentSlide - 1);
+  }
+
+  pauseButton.addEventListener('click', () => {
+    if (isPlaying) pauseSlideShow();
+    else playSlideShow();
+  });
+
+  function pauseSlideShow() {
+    pauseButton.className = 'fas fa-pause';
+    isPlaying = false;
+    clearInterval(slideInterval);
+  }
+
+  function playSlideShow() {
+    pauseButton.className = 'fas fa-play';
+    isPlaying = true;
+    slideInterval = setInterval(nextSlide, 1000);
+  }
+
+  next.addEventListener('click', () => {
+    pauseSlideShow();
+    nextSlide();
+  });
+
+  previous.addEventListener('click', () => {
+    pauseSlideShow();
+    previousSlide();
+  });
+
+  indicators.addEventListener('click', (event) => {
+    let target = event.target;
+
+    if (target.classList.contains('indicators__item')) {
+      pauseSlideShow();
+      goToSlide(+target.getAttribute('data-slide-to'));
+    }
+  });
+
 }
 
 createCarousel(5);
-
-let slides = document.querySelectorAll('.slides__item');
-let currentSlide = 0;
-let slideInterval = setInterval(nextSlide, 1000);
-let isPlaying = true;
-
-
-let pauseButton = document.querySelector('.controls__pause');
-let pauseIcon = document.querySelector('#pause');
-let nextButton = document.querySelector('#next');
-let previousButton = document.querySelector('#previous');
-let controls = document.querySelector('.controls');
-
-let indicatorsItems = document.querySelectorAll('.indicators__item');
-let indicators = document.querySelector('.indicators');
-let carousel = document.querySelector('.carousel');
-
-function goToSlide(n) {
-  slides[currentSlide].classList.toggle('active');
-  indicatorsItems[currentSlide].classList.toggle('active');
-  currentSlide = (n + slides.length) % slides.length;
-  slides[currentSlide].classList.toggle('active');
-  indicatorsItems[currentSlide].classList.toggle('active');
-}
-
-function nextSlide() {
-  goToSlide(currentSlide + 1);
-}
-
-function previousSlide() {
-  goToSlide(currentSlide - 1);
-}
-
-function pauseSlideShow() {
-  pauseIcon.className = 'fas fa-play';
-  isPlaying = false;
-  clearInterval(slideInterval);
-}
-
-function playSlideShow() {
-  pauseIcon.className = 'fas fa-pause';
-  isPlaying = true;
-  slideInterval = setInterval(nextSlide, 2000);
-}
-
-function indicatorsSlide(event) {
-  let target = event.target;
-
-  if (target.classList.contains('indicators__item')) {
-    pauseSlideShow();
-    goToSlide(+target.getAttribute('data-slide-to'));
-  }
-}
-
-indicators.addEventListener('click', indicatorsSlide);
-
-function toPauseIfPlay() {
-  if (isPlaying) pauseSlideShow();
-  else playSlideShow();
-}
-
-pauseButton.addEventListener('click', toPauseIfPlay);
-
-function toNextSlide() {
-  pauseSlideShow();
-  nextSlide();
-}
-
-nextButton.addEventListener('click', toNextSlide);
-
-function toPreviousSlide() {
-  pauseSlideShow();
-  previousSlide();
-}
-
-previousButton.addEventListener('click', toPreviousSlide);
