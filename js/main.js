@@ -80,7 +80,7 @@ function createCarousel(slidesCount = 5) {
   iconItems[2].setAttribute('id', 'pause');
 
   let currentSlide = 0;
-  let slideInterval = setInterval(nextSlide, 2000);
+  let slideInterval = setInterval(nextSlide, 1000);
 
   let isPlaying = true;
   let pauseButton = document.querySelector('#pause');
