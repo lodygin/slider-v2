@@ -51,10 +51,6 @@ function createCarousel(slidesCount = 5) {
 
   indicatorsItems[0].classList.add('active');
 
-  // indicatorsItems.forEach(item => {
-  //   item.style.backgroundColor = 'red';
-  // });
-
   let outControls = document.createElement('div');
 
   outControls.classList.add('controls');
@@ -129,7 +125,7 @@ function createCarousel(slidesCount = 5) {
   function goToSlide(n) {
     slides[currentSlide].classList.toggle('active');
     indicatorsItems[currentSlide].classList.toggle('active');
-    indicatorsItems[currentSlide].style = null;
+    indicatorsItems[currentSlide].removeAttribute('style');
     currentSlide = (n + slides.length) % slides.length;
     slides[currentSlide].classList.toggle('active');
     indicatorsItems[currentSlide].classList.toggle('active');
@@ -184,4 +180,4 @@ function createCarousel(slidesCount = 5) {
   }
 }
 
-createCarousel(8);
+createCarousel(4);
