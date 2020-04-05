@@ -7,7 +7,10 @@ function createCarousel(slidesCount = 5) {
   let style = document.createElement('style');
 
   for (let i = 1; i <= slidesCount; i++) {
-    styleItems += `.slides__item:nth-child(${i}) { background-image: url('img/i${Math.round(1 + Math.random() * 5)}.jpg'); } `;
+    styleItems += `
+    .slides__item:nth-child(${i}) { 
+      background-image: url('img/i${Math.round(1 + Math.random() * 5)}.jpg'); 
+    } `;
   }
 
   style.innerHTML = styleItems;
@@ -47,6 +50,10 @@ function createCarousel(slidesCount = 5) {
   let indicatorsItems = document.querySelectorAll('.indicators__item');
 
   indicatorsItems[0].classList.add('active');
+
+  // indicatorsItems.forEach(item => {
+  //   item.style.backgroundColor = 'red';
+  // });
 
   let outControls = document.createElement('div');
 
@@ -89,16 +96,44 @@ function createCarousel(slidesCount = 5) {
 
   let indicators = document.querySelector('.indicators');
 
-  style.innerHTML += '.slides { position: relative; }';
-  style.innerHTML += '.controls { position: relative; }';
-  style.innerHTML += '.indicators { display: flex; }';
+  style.innerHTML += `
+  .slides { 
+    position: relative;
+  }`;
+
+  style.innerHTML += `
+  .controls { 
+    position: relative; 
+  }`;
+
+  style.innerHTML += `
+  .indicators { 
+    display: flex; 
+  }`;
+
+  style.innerHTML += `
+  .indicators__item {
+    width: 9px;
+    height: 9px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    margin: 5px 0;
+    cursor: pointer;
+    box-shadow: 0 0 20px #000;
+    transition-duration: 0.1s;
+    transition-property: width, height;
+  }`;
+
+  indicatorsItems[0].style.backgroundColor = 'red';
 
   function goToSlide(n) {
     slides[currentSlide].classList.toggle('active');
     indicatorsItems[currentSlide].classList.toggle('active');
+    indicatorsItems[currentSlide].style = null;
     currentSlide = (n + slides.length) % slides.length;
     slides[currentSlide].classList.toggle('active');
     indicatorsItems[currentSlide].classList.toggle('active');
+    indicatorsItems[currentSlide].style.backgroundColor = 'red';
   }
 
   function nextSlide() {
@@ -136,15 +171,17 @@ function createCarousel(slidesCount = 5) {
     previousSlide();
   });
 
-  indicators.addEventListener('click', (event) => {
+  indicators.addEventListener('click', eventIndicators);
+
+  function eventIndicators(event) {
+
     let target = event.target;
 
     if (target.classList.contains('indicators__item')) {
       pauseSlideShow();
       goToSlide(+target.getAttribute('data-slide-to'));
     }
-  });
-
+  }
 }
 
-createCarousel(5);
+createCarousel(8);
